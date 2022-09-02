@@ -110,7 +110,7 @@ export class FieldComponent implements AfterViewInit, OnChanges {
         this.drawCircle(
             x,
             y,
-            this.playerSize,
+            this.player?.score ?? this.playerSize,
             this.playerColor,
             'black',
             this.player?.name ?? DEFAULT_PLAYER_NAME,
@@ -154,7 +154,7 @@ export class FieldComponent implements AfterViewInit, OnChanges {
             const x = p.canvasCoord!.x;
             const y = p.canvasCoord!.y;
 
-            this.drawCircle(x, y, this.playerSize, DEFAULT_OTHER_PLAYER_COLOR, 'black', p.player.name);
+            this.drawCircle(x, y, p.player.score, DEFAULT_OTHER_PLAYER_COLOR, 'black', p.player.name);
         }
     }
 
