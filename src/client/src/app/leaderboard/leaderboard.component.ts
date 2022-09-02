@@ -2,18 +2,18 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IGameState, IPlayer } from '../../../../models';
 
 @Component({
-  selector: 'app-leaderboard',
-  templateUrl: './leaderboard.component.html',
-  styleUrls: ['./leaderboard.component.scss'],
+    selector: 'app-leaderboard',
+    templateUrl: './leaderboard.component.html',
+    styleUrls: ['./leaderboard.component.scss'],
 })
 export class LeaderboardComponent implements OnInit {
-  @Input()
-  state?: IGameState;
+    @Input()
+    state?: IGameState;
 
-  @Input()
-  player?: IPlayer;
+    @Input()
+    player?: IPlayer;
 
-  constructor() {}
+    constructor() {}
 
-  ngOnInit(): void {}
+    ngOnInit(): void {}
 }

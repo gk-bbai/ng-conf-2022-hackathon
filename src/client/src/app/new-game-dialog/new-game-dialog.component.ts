@@ -4,26 +4,26 @@ import { Router } from '@angular/router';
 import { StateService } from '../state/state.service';
 
 @Component({
-  selector: 'app-new-game-dialog',
-  templateUrl: './new-game-dialog.component.html',
-  styleUrls: ['./new-game-dialog.component.scss'],
+    selector: 'app-new-game-dialog',
+    templateUrl: './new-game-dialog.component.html',
+    styleUrls: ['./new-game-dialog.component.scss'],
 })
 export class NewGameDialogComponent implements OnInit {
-  readonly nameControl = new FormControl('', [Validators.required]);
+    readonly nameControl = new FormControl('', [Validators.required]);
 
-  constructor(private stateService: StateService, private router: Router) {}
+    constructor(private stateService: StateService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.nameControl.patchValue(this.stateService.playerName);
-  }
-
-  joinGame() {
-    if (this.nameControl.invalid) {
-      return;
+    ngOnInit(): void {
+        this.nameControl.patchValue(this.stateService.playerName);
     }
 
-    this.stateService.playerName = this.nameControl.value;
+    joinGame() {
+        if (this.nameControl.invalid) {
+            return;
+        }
 
-    this.router.navigate(['/game']);
-  }
+        this.stateService.playerName = this.nameControl.value;
+
+        this.router.navigate(['/game']);
+    }
 }

@@ -12,17 +12,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SortPipe } from './leaderboard/sort.pipe';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    GameComponent,
-    MenuComponent,
-    LeaderboardComponent,
-    FieldComponent,
-    NewGameDialogComponent,
-    SortPipe,
-  ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
-  providers: [],
-  bootstrap: [AppComponent],
+    declarations: [
+        AppComponent,
+        GameComponent,
+        MenuComponent,
+        LeaderboardComponent,
+        FieldComponent,
+        NewGameDialogComponent,
+        SortPipe,
+    ],
+    imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
+    providers: [],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

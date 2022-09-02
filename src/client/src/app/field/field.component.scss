@@ -1,5 +1,5 @@
-@import "../../shared";
+@import '../../shared';
 
 canvas {
-  @include fullScreen();
+    @include fullScreen();
 }

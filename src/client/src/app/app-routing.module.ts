@@ -4,12 +4,12 @@ import { GameComponent } from './game/game.component';
 import { MenuComponent } from './menu/menu.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', component: MenuComponent },
-  { path: 'game', component: GameComponent },
+    { path: '', pathMatch: 'full', component: MenuComponent },
+    { path: 'game', component: GameComponent },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
 export class AppRoutingModule {}
