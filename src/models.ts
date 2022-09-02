@@ -14,6 +14,7 @@ export interface IPlayer {
     score: number;
     x: number;
     y: number;
+    direction: 'left' | 'right' | 'up' | 'down';
 }
 
 export interface ICoin {

@@ -73,6 +73,10 @@ export class GameComponent implements AfterViewInit {
 
     private updateGame(state: IGameState) {
         this.gameState = state;
+        // this.gameState.players.forEach(player => {
+
+        //     player.skin
+        // })
         this.player = this.gameState.players.find(p => p.id === this.playerId);
     }
 

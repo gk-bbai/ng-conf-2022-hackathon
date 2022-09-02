@@ -1,6 +1,8 @@
 import { Commands, IGameState, IPlayer } from './models';
 
 const coinCount = 100;
+const shipWidth = 10;
+const coinWidth = 2;
 
 export function getInitialState(): IGameState {
     return {
@@ -29,6 +31,7 @@ function evaluateCommands(state: IGameState, commands: Commands) {
             return;
         }
         const command = commands[playerId];
+        player.direction = command;
         if (command === 'up') {
             const newY = player.y - 1;
             if (newY < 0) {
@@ -57,9 +60,18 @@ function evaluateCommands(state: IGameState, commands: Commands) {
     });
 }
 
+function distance(a: { x: number; y: number }, b: { x: number; y: number }) {
+    const deltaX = a.x - b.x;
+    const deltaY = a.y - b.y;
+
+    // console.log(Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
 function resolveCoinCollisions(state: IGameState) {
     state.coins.slice().forEach(coin => {
-        const player = state.players.find(p => p.x === coin.x && p.y === coin.y);
+        const player = state.players.find(p => distance(p, coin) < coinWidth);
         if (player) {
             player.score++;
             state.coins = state.coins.filter(c => c !== coin);
@@ -72,7 +84,10 @@ function resolvePlayerCollisions(state: IGameState) {
         if (!state.players.includes(player)) {
             return;
         }
-        const otherPlayer = state.players.find(p => p !== player && p.x === player.x && p.y === player.y);
+        const otherPlayer = state.players.find(
+            otherPlayer =>
+                otherPlayer !== player && distance(otherPlayer, player) < shipWidth,
+        );
         if (otherPlayer) {
             const pool = 2;
             const roll = Math.floor(Math.random() * pool);
@@ -108,10 +123,11 @@ export function getUnoccupiedLocation(state: IGameState): {
     while (!location) {
         const x = Math.floor(Math.random() * state.fieldSize.width);
         const y = Math.floor(Math.random() * state.fieldSize.height);
-        if (state.players.find(p => p.x === x && p.y === y)) {
+        if (state.players.find(player => distance(player, { x, y }) < shipWidth)) {
             continue;
         }
-        if (state.coins.find(c => c.x === x && c.y === y)) {
+        if (state.coins.find(coin => distance(coin, { x, y }) < coinWidth)) {
+        // if (state.coins.find(c => c.x === x && c.y === y)) {
             continue;
         }
         location = { x, y };

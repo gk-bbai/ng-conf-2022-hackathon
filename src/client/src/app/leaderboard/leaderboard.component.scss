@@ -1,8 +1,45 @@
 .leaderboard {
     border: solid black 1px;
-    background-color: white;
-    padding: 5px;
+    background-color: #030508;
+    padding: 4px 8px;
+    border-radius: 6px;
+
+    color: white;
+
+    .row {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        gap: 2rem;
+
+        border-radius: 4px;
+        padding: 4px 8px;
+        background-color: #192245;
+
+        font-weight: 300;
+
+        .rank {
+            background-color: #12182b;
+            margin: -4px -8px;
+            padding: 4px 8px;
+            text-align: right;
+            border-radius: 4px;
+
+            font-weight: 700;
+        }
+        .name {
+            text-align: right;
+        }
+
+        .score {
+            font-size: 1.1em;
+        }
+    }
+
+    .row + .row {
+        margin-top: 4px;
+    }
 }
+
 .player {
     font-weight: bold;
 }

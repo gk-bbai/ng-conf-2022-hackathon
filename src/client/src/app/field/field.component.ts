@@ -33,15 +33,60 @@ export class FieldComponent implements AfterViewInit, OnChanges {
     @Input()
     state?: IGameState;
 
-    @Input()
-    player?: IPlayer;
+    @Input() player!: IPlayer;
     @Input()
     playerColor = DEFAULT_PLAYER_COLOR;
     @Input()
     playerSize = DEFAULT_PLAYER_SIZE;
 
     canvas?: HTMLCanvasElement;
-    ctx?: CanvasRenderingContext2D;
+    ctx!: CanvasRenderingContext2D;
+
+    spriteSheet = new Image();
+    spriteData: { x: number; y: number; w: number; h: number }[] = [
+        {
+            x: 6,
+            y: 4,
+            w: 56,
+            h: 55,
+        },
+        {
+            x: 67,
+            y: 3,
+            w: 62,
+            h: 58,
+        },
+        {
+            x: 132,
+            y: 4,
+            w: 53,
+            h: 55,
+        },
+        {
+            x: 71,
+            y: 65,
+            w: 51,
+            h: 58,
+        },
+        {
+            x: 69,
+            y: 125,
+            w: 56,
+            h: 59,
+        },
+        {
+            x: 14,
+            y: 128,
+            w: 39,
+            h: 57,
+        },
+        {
+            x: 131,
+            y: 130,
+            w: 55,
+            h: 56,
+        },
+    ];
 
     constructor() {}
 
@@ -57,6 +102,8 @@ export class FieldComponent implements AfterViewInit, OnChanges {
         this.ctx = this.canvas!.getContext('2d')!;
         this.render();
         window.addEventListener('resize', () => this.render());
+
+        this.spriteSheet.src = 'assets/shipsall.gif';
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -70,7 +117,8 @@ export class FieldComponent implements AfterViewInit, OnChanges {
 
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
-        this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+        this.ctx.fillStyle = '0x1b1b1e';
+        this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
         this.drawBackground();
         this.drawTokens();
         this.drawOtherPlayers();
@@ -107,14 +155,10 @@ export class FieldComponent implements AfterViewInit, OnChanges {
         const x = this.canvas.clientWidth / 2;
         const y = this.canvas.clientHeight / 2;
 
-        this.drawCircle(
-            x,
-            y,
-            this.player?.score ?? this.playerSize,
-            this.playerColor,
-            'black',
-            this.player?.name ?? DEFAULT_PLAYER_NAME,
-        );
+        this.drawCircle(x, y, this.playerSize, this.playerColor, 'black', this.player?.name ?? DEFAULT_PLAYER_NAME);
+
+        const sprite = this.spriteData[0]
+        this.drawSprite(x, y, sprite, this.player.direction)
     }
 
     drawTokens() {
@@ -133,7 +177,8 @@ export class FieldComponent implements AfterViewInit, OnChanges {
             const x = coin.canvasCoord!.x;
             const y = coin.canvasCoord!.y;
 
-            this.drawCircle(x, y, this.playerSize, DEFAULT_COIN_COLOR, 'gray');
+            // this.drawCircle(x, y, this.playerSize, DEFAULT_COIN_COLOR, 'gray');
+            this.drawStar(x, y, 5, 4, 2);
         }
     }
 
@@ -150,12 +195,55 @@ export class FieldComponent implements AfterViewInit, OnChanges {
             }))
             .filter(c => c.canvasCoord);
 
-        for (let p of visiblePlayers) {
+        visiblePlayers.forEach((p, index) => {
             const x = p.canvasCoord!.x;
             const y = p.canvasCoord!.y;
 
-            this.drawCircle(x, y, p.player.score, DEFAULT_OTHER_PLAYER_COLOR, 'black', p.player.name);
+            this.drawCircle(x, y, this.playerSize, DEFAULT_OTHER_PLAYER_COLOR, 'black', p.player.name);
+            const sprite = this.spriteData[index + 1 % this.spriteData.length]
+
+            this.drawSprite(x, y, sprite, p.player.direction)
+        });
+    }
+
+    drawSprite(x: number, y: number, sprite: any, direction: string) {
+        let degrees = 0
+
+        switch(direction) {
+            case 'up':
+                degrees = 0;
+                break;
+            case 'right':
+                degrees = 90;
+                break;
+            case 'down':
+                degrees = 180;
+                break;
+            case 'left':
+                degrees = 270;
+                break;
+            default:
+                degrees = 0;
+                break;
         }
+
+        this.ctx.save()
+
+        this.ctx.translate(x, y)
+        this.ctx.rotate(degrees * Math.PI / 180)
+        this.ctx.drawImage(
+            this.spriteSheet,
+            sprite.x,
+            sprite.y,
+            sprite.w,
+            sprite.h,
+            -sprite.w / 2,
+            -sprite.h / 2,
+            sprite.w,
+            sprite.h,
+        );
+
+        this.ctx.restore()
     }
 
     drawBackground() {
@@ -163,7 +251,7 @@ export class FieldComponent implements AfterViewInit, OnChanges {
             return;
         }
 
-        this.ctx.strokeStyle = 'lightgray';
+        this.ctx.strokeStyle = 'rgba(109, 103, 110, 0.35)';
         const startX = ((this.player?.x ?? 0) % GRID_SCALE) * SCALE;
         for (let x = this.width - startX; x >= 0; x -= SCALE * GRID_SCALE) {
             this.ctx.beginPath();
@@ -196,5 +284,37 @@ export class FieldComponent implements AfterViewInit, OnChanges {
             const nameHeight = Number(/\d+/.exec(this.ctx.font));
             this.ctx.fillText(label, x, y - nameHeight - 0.2 * this.playerSize);
         }
+    }
+
+    drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number) {
+        var rot = (Math.PI / 2) * 3;
+        var x = cx;
+        var y = cy;
+        var step = Math.PI / spikes;
+
+        this.ctx.beginPath();
+        this.ctx.fillStyle = DEFAULT_COIN_COLOR;
+        this.ctx.strokeStyle = DEFAULT_COIN_COLOR;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = DEFAULT_COIN_COLOR;
+        this.ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            this.ctx.lineTo(x, y);
+            rot += step;
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            this.ctx.lineTo(x, y);
+            rot += step;
+        }
+        this.ctx.lineTo(cx, cy - outerRadius);
+        this.ctx.closePath();
+        this.ctx.lineWidth = 5;
+        this.ctx.strokeStyle = DEFAULT_COIN_COLOR;
+        this.ctx.stroke();
+        this.ctx.fillStyle = 'yellow';
+        this.ctx.fill();
     }
 }

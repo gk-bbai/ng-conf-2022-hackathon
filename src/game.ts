@@ -33,12 +33,14 @@ export class Game {
         };
 
         const location = getUnoccupiedLocation(this._gameState);
+        console.log(location)
 
         this._gameState.players.push({
             ...location,
             id,
             name,
-            score: 1,
+            score: 10,
+            direction: 'up',
         });
     }
 
